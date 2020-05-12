@@ -1,0 +1,36 @@
+---
+title: "Modelos: conceptos básicos - Chapter 23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introducción
+
+El objetivo de un modelo es proveer un resumen de baja dimensión de un conjunto de datos (o dataset, en inglés). En el contexto de este libro vamos a usar modelos para particionar los datos en patrones y residuos. Patrones fuertes esconderán tendencias sutiles, por lo que usaremos modelos para remover capas de estructuras mientras exploramos el conjunto de datos.
+
+Hay dos partes en un modelo:
+
+Primero, defines una familia de modelos que expresa un patrón que quieras capturar. El patrón debe ser preciso, pero también genérico. Por ejemplo, el patrón podría ser una línea recta, o una curva cuadrática. Expresarás la familia de modelos con una ecuación como y = a_1 * x + a_2 o y = a_1 * x ^ a_2. Aquí, x e y son variables conocidas de tus datos, y a_1 y a_2 son parámetros que pueden variar al capturar diferentes patrones.
+
+Luego, generas un modelo ajustado al encontrar un modelo de la familia que sea lo más cercano a tus datos. Esto toma la familia de modelos genérica y la vuelve específica, como y = 3 * x + 7 o y = 9 * x ^ 2.
+
+
+Es importante enteder que el modelo ajustado es solamente el modelo más cercano a la familia de modelos. Esto implica que tu tienes el “mejor” modelo (de acuerdo a cierto criterio); no implica que tu tienes un buen modelo y ciertamente no implica que ese modelo es “verdadero”. George Box lo explica muy bien en su famoso aforismo:
+
+Todos los modelos están mal, algunos son útiles.
+
+
+## Prerequisitos
+
+```{r}
+library(tidyverse)
+
+library(modelr)
+options(na.action = na.warn)
+```
+
+        

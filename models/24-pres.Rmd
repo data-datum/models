@@ -1,0 +1,188 @@
+---
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css:  ["default", "default-fonts", "animate.css",  "hygge"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: true
+---
+class: inverse, center
+```{r , message=FALSE, warning=FALSE, include=FALSE} 
+library(fontawesome)
+library(emo)
+```
+
+# `r fa("r-project", fill = 'steelblue')` Preparación Certificación RStudio  `r emo::ji("rocket")`<br> <br> 
+
+## `r emo::ji("wrench")`Modelos  `r emo::ji("computer")` 
+<br> <br> <br> 
+
+.large[Roxana N. Villafañe <a href='http://twitter.com/data_datum'>`r fa("twitter", fill = 'steelblue')` @data_datum</a>] <br> 
+
+
+
+`r emo::ji("sparkles")`
+<br> Link <> `r emo::ji("star2")`
+
+---
+
+## Introducción
+
+En el capítulo previo aprendimos cómo funcionan los modelos lineales, y aprendimos algunas herramientas básicas para entender lo que un modelo está mostrando con sus datos. El capítulo previo se enfocó en simular conjunto de datos. Este capítulo se centrará en datos reales, mostrando como puedes progresivamente construir un modelo que te ayude a entender los datos.
+
+---
+
+## Prerrequisitos
+
+Usaremos las mismas herramientas que en el capítulo anterior, pero agregaremos algunos conjuntos de datos reales: **diamantes** y **vuelos** del paquete datos También necesitaremos lubridate para trabajar con fechas/horas en vuelos.
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(modelr)
+library(lubridate)
+library(datos)
+options(na.action = na.warn)
+```
+
+---
+
+# ¿Por qué los diamantes de baja calidad son más caros?
+
+---
+
+En el capítulo anterior vimos una sorprendente relación entre la calidad de los diamantes y su precio: diamantes de baja calidad (cortes pobres, colores malos, y claridad inferior) tienen más altos precios.
+
+
+```{r}
+ggplot(diamantes, aes(corte, precio)) + geom_boxplot()
+```
+
+---
+
+```{r}
+ggplot(diamantes, aes(color, precio)) + geom_boxplot()
+```
+
+---
+
+```{r}
+ggplot(diamantes, aes(claridad, precio)) + geom_boxplot()
+```
+
+---
+
+## Precio y quilates
+
+Pareciera que los diamantes de menor calidad tiene precios más altos porque hay una importante variable de confusión: el peso (carat) del diamante. El peso del diamante es el factor individual más importante para determinar el precio del diamante, y los diamantes de menor calidad tienden a ser más grandes.
+
+```{r}
+ggplot(diamantes, aes(quilate, precio)) + 
+  geom_hex(bins = 50)
+```
+
+---
+
+Hagamos algunos ajustes al conjunto de datos de diamantes para que sea más fácil trabajar con ellos:
+
+1. Foco en los diamantes más pequeños que 2.5 quilates (99.7% de los datos).
+
+```{r}
+diamantes2 <- diamantes %>%
+  filter(quilate <= 2.5) %>% 
+  mutate(log_precio = log2(precio), log_quilates = log2(quilate))
+```
+
+---
+2. Hacer una transformación logarítmica de las variables quilates y precio.
+
+```{r}
+ggplot(diamantes2, aes(log_quilates, log_precio)) + 
+  geom_hex(bins = 50)
+```
+
+---
+
+La transformación logarítmica es particularmente util aquí porque hace que el patrón sea lineal, y patrones lineales son más fáciles de usar. Tomemos el próximo paso y eliminemos ese patron lineal fuerte. Primero hacemos explícito el patrón ajustando el modelo:
+
+```{r}
+mod_diamantes <- lm(log_precio ~ log_quilates, data = diamantes2)
+
+```
+
+Luego observamos lo que el modelo nos dice. Ten en cuenta que vuelvo atrás la transformación de la predicción, deshaciendo la transformación logarítmica, para poder superponer las predicciones sobre los datos originales:
+
+---
+
+```{r eval=FALSE}
+cuadricula <- diamantes2 %>% 
+  data_grid(quilate = seq_range(quilate, 20)) %>% 
+  mutate(log_quilates = log2(quilate)) %>% 
+  add_predictions(mod_diamantes, "log_precio") %>% 
+  mutate(precio = 2 ^ log_precio)
+
+ggplot(diamantes2, aes(quilate, precio)) + 
+  geom_hex(bins = 50) + 
+  geom_line(data = cuadricula, colour = "red", size = 1)
+```
+
+---
+
+```{r echo=FALSE}
+cuadricula <- diamantes2 %>% 
+  data_grid(quilate = seq_range(quilate, 20)) %>% 
+  mutate(log_quilates = log2(quilate)) %>% 
+  add_predictions(mod_diamantes, "log_precio") %>% 
+  mutate(precio = 2 ^ log_precio)
+
+ggplot(diamantes2, aes(quilate, precio)) + 
+  geom_hex(bins = 50) + 
+  geom_line(data = cuadricula, colour = "red", size = 1)
+```
+
+
+---
+
+Si creemos en nuestro modelo, los diamantes grandes son mucho más baratos que lo esperado. Esto es posiblemente porque ninguno de los diamantes de estos datos cuesta más de US$19,000.
+
+Ahora podemos ver los residuos, lo cual comprueba que hemos eliminado el patrón lineal fuerte:
+
+---
+
+```{r}
+diamantes2 <- diamantes2 %>% 
+  add_residuals(mod_diamantes, "lresid")
+
+ggplot(diamantes2, aes(log_quilates, lresid)) + 
+  geom_hex(bins = 50)
+```
+
+
+---
+
+Es importante destacar que ahora podemos volver a hacer nuestros gráficos motivadores utilizando esos residuos en lugar de precio.
+
+```{r}
+ggplot(diamantes2, aes(corte, lresid)) + geom_boxplot()
+```
+
+---
+
+```{r}
+ggplot(diamantes2, aes(color, lresid)) + geom_boxplot()
+```
+
+
+---
+```{r}
+ggplot(diamantes2, aes(claridad, lresid)) + geom_boxplot()
+```
+
+---
+
+Ahora vemos la relación que esperábamos: a medida que aumenta la calidad del diamante, también lo hace su precio relativo. Para interpretar el eje y, necesitamos pensar que nos dicen los residuos, y en que escala están. Un residuo de -1 indica que log_precio era 1 unidad más baja que la predicción basada únicamente en su peso. 2−1 es 1/2, los puntos con un valor de -1 son la mitad del precio esperado, y los residuos con el valor 1 son el doble del precio predicho.
+
+---

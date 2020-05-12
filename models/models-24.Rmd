@@ -251,11 +251,41 @@ vuelos_por_dia %>%
     scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b")
 ```
 
+
+```{r}
+vuelos_por_dia %>% 
+  filter(dia_semana == "Sat") %>% 
+  ggplot(aes(fecha, n)) + 
+    geom_point() + 
+    geom_line() +
+    scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b")
+```
+
 Sospecho que este patrón es causado por las vacaciones de invierno: mucha gente va de vacaciones en verano, y a las personas no les importa viajar un sábado en sus vacaciones. Al mirar este gráfico, podemos suponer que las vacaciones de verano son de principio de junio a finales de agosto. Parece que se alinea bastante bien con el calendario escolar del estado de NY: las vacaciones de verano en 2013 fueron del 26 de junio hasta el 9 de septiembre.
 
 ¿Por qué hay más vuelos los sábados en primavera que en otoño? Le pregunté a algunos amigos estadounidenses y ellos me dijeron que es menos común planificar vacaciones familiares durante el otoño porque debido a los grandes feriados de Acción de Gracias y Navidad. No tenemos los datos para estar seguros, pero parecería una hipótesis de trabajo razonable.
 
 Vamos a crear la variable “trimestre” que capture aproximadamente los tres períodos escolares, y verificamos nuestro trabajo con un gráfico
+
+```{r}
+trimestre <- function(fecha) {
+  cut(fecha, 
+    breaks = ymd(20130101, 20130605, 20130825, 20140101),
+    labels = c("primavera", "verano", "otoño")
+  )
+}
+
+vuelos_por_dia <- vuelos_por_dia %>% 
+  mutate(trimestre = trimestre(fecha)) 
+
+vuelos_por_dia %>% 
+  filter(dia_semana == "Sat") %>% 
+  ggplot(aes(fecha, n, colour = trimestre)) +
+  geom_point(alpha = 1/3) + 
+  geom_line() +
+  scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b")
+```
+
 
 ```{r}
 trimestre <- function(fecha) {
@@ -365,3 +395,5 @@ vuelos_por_dia %>%
 ```
 
 Vemos un patrón fuerte en el número de vuelos de los sábados. Esto es tranquilizador, porque también vimos ese patrón en los datos sin transformar. Es una buena señal cuando obtienes la misma señal desde diferentes enfoques.
+
+
