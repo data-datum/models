@@ -58,9 +58,8 @@ class: center, middle
 En este capítulo usaremos el paquete modelr que tiene las funciones de modelado de R base para que funcionen naturalmente en un pipe.
 
 ```{r message=FALSE, warning=FALSE}
-library(tidyverse)
-
-library(modelr)
+library(tidyverse)  #<<
+library(modelr)  #<<
 options(na.action = na.warn)
 ```
 
