@@ -299,7 +299,7 @@ class: center, middle
 ---
 
 ## add_residuals()
-Notar que usamos __el data frame original y no no una grilla manufacturada.__´ Esto es porque para calcular los residuos se necesitan los valores de “y”.
+Notar que usamos __el data frame original y no una grilla manufacturada.__´ Esto es porque para calcular los residuos se necesitan los valores de “y”.
 
 
 ```{r}
