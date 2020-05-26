@@ -29,12 +29,25 @@ library(emo)
 
 ---
 
-# Introducción
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
 
-## El objetivo de un modelo es proveer un resumen de baja dimensión de un conjunto de datos
+# Generalidades del tema
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+## El objetivo de un modelo es 
+## proveer un resumen de baja dimensión 
+## de un conjunto de datos
 
     
-  
 
 
 
@@ -42,7 +55,7 @@ library(emo)
 
 # Prerrequisitos
 
-En este capítulo usaremos el paquete modelr que encapsula (del inglés wrapper) las funciones de modelado de R base para que funcionen naturalmente en un pipe.
+En este capítulo usaremos el paquete modelr que tiene las funciones de modelado de R base para que funcionen naturalmente en un pipe.
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -65,7 +78,11 @@ ggplot(sim1, aes(x, y)) +
 
 ---
 
-```{r}
+# Un mal modelo
+
+Se sobreentiende que un buen modelo es aquel que está "cerca" de los datos
+
+```{r eval=TRUE, echo=FALSE, fig.height=6}
 modelos <- tibble(
   a1 = runif(250, -20, 40),
   a2 = runif(250, -5, 5)
@@ -78,6 +95,40 @@ ggplot(sim1, aes(x, y)) +
 
 ---
 
+# Un buen modelo
+
+![Caption for the picture](img/grafico-modelos.png)
+
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Hay dos partes en un modelo:
+
+### 1. Definir una familia de modelos que expresa un patrón que se quiere capturar. Debe ser preciso y genérico. Ej; una línea recta o curva cuadrática 
+### 2. Generar un modelo ajustado al encontrar un modelo de la familia que sea lo más cercano a tus datos. 
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Un lugar fácil para comenzar es encontrar la distancia vertical entre cada punto y el modelo.
+## La distancia es solo la diferencia entre el valor dado por el modelo (la predicción), y el valor real y en los datos (la respuesta).
+
+---
+
+# Primer paso
+
+### Para calcular esta distancia, 
+### transformamos nuestra familia de modelos en una función de R. Esta función toma los parámetros del modelo y los datos como inputs, y retorna el valor predicho por el modelo como output:
+
 ```{r}
 model1 <- function(a, data) {
   a[1] + data$x * a[2]
@@ -85,40 +136,14 @@ model1 <- function(a, data) {
 model1(c(7, 1.5), sim1)
 ```
 
-
-
 ---
-  
-Hay dos partes en un modelo:
+# Distancia entre lo predicho y los valores reales. 
 
-Primero, defines una familia de modelos que expresa un patrón que quieras capturar. El patrón debe ser preciso, pero también genérico. Por ejemplo, el patrón podría ser una línea recta, o una curva cuadrática. Expresarás la familia de modelos con una ecuación como y = a_1 * x + a_2 o y = a_1 * x ^ a_2. Aquí, x e y son variables conocidas de tus datos, y a_1 y a_2 son parámetros que pueden variar al capturar diferentes patrones.
+¿Cómo las colapsamos en un único número?
 
-Luego, generas un modelo ajustado al encontrar un modelo de la familia que sea lo más cercano a tus datos. Esto toma la familia de modelos genérica y la vuelve específica, como y = 3 * x + 7 o y = 9 * x ^ 2.
+En estadística se usa la __“raíz del error cuadrático medio” (RMSE o root-mean-squared deviation).__
 
----
-
-Un lugar fácil para comenzar es encontrar la distancia vertical entre cada punto y el modelo, como lo muestra el siguiente diagrama. (Nota que he cambiado ligeramente los valores x para que puedas ver las distancias individuales.)
-
-La distancia es solo la diferencia entre el valor dado por el modelo (la predicción), y el valor real y en los datos (la respuesta).
-
----
-
-Para calcular esta distancia, primero transformamos nuestra familia de modelos en una función de R. Esta función toma los parámetros del modelo y los datos como inputs, y retorna el valor predicho por el modelo como output:
-
-```{r}
-model1 <- function(a, data) {
-  a[1] + data$x * a[2]
-}
-model1(c(7, 1.5), sim1)
-#>  [1]  8.5  8.5  8.5 10.0 10.0 10.0 11.5 11.5 11.5 13.0 13.0 13.0 14.5 14.5 14.5
-#> [16] 16.0 16.0 16.0 17.5 17.5 17.5 19.0 19.0 19.0 20.5 20.5 20.5 22.0 22.0 22.0
-```
-
----
-
-Luego, necesitaremos calcular la distancia entre lo predicho y los valores reales. En otras palabras, el siguiente gráfico muestra 30 distancias: ¿Cómo las colapsamos en un único número?
-
-Una forma habitual de hacer esto en estadística es usar la “raíz del error cuadrático medio” (del inglés root-mean-squared deviation). Calculamos la diferencia entre los valores reales y los predichos, los elevamos al cuadrado, luego se promedian y tomamos la raíz cuadrada. 
+Calculamos la diferencia entre los valores reales y los predichos, los elevamos al cuadrado, luego se promedian y tomamos la raíz cuadrada. 
 
 ```{r}
 measure_distance <- function(mod, data) {
@@ -126,12 +151,12 @@ measure_distance <- function(mod, data) {
   sqrt(mean(diff^2))
 }
 measure_distance(c(7, 1.5), sim1)
-#> [1] 2.67
 ```
 
 ---
-
-Ahora podemos usar purrr para calcular la distancia de todos los modelos definidos anteriormente. Necesitamos una función auxiliar debido a que nuestra función de distancia espera que el modelo sea un vector numérico de longitud 2.
+## Purrr
+Calcular la distancia de todos los modelos definidos anteriormente. 
+Necesitamos una función auxiliar debido a que nuestra función de distancia espera que el modelo sea un vector numérico de longitud 2.
 
 ```{r}
 sim1_dist <- function(a1, a2) {
@@ -144,10 +169,11 @@ modelos
 ```
 
 ---
+### 10 mejores modelos
 
-A continuación, vamos a superponer los mejores 10 modelos en los datos. He coloreado los modelos usando -dist: esto es una forma fácil de asegurarse de que los mejores modelos (es decir, aquellos con la menor distancia) tengan los colores más brillantes.
+He coloreado los modelos usando -dist: esto es una forma fácil de asegurarse de que los mejores modelos (es decir, aquellos con la menor distancia) tengan los colores más brillantes.
 
-```{r}
+```{r fig.height=4}
 ggplot(sim1, aes(x, y)) +
   geom_point(size = 2, colour = "grey30") +
   geom_abline(
@@ -156,11 +182,37 @@ ggplot(sim1, aes(x, y)) +
   )
 ```
 
+
+
 ---
 
+## Usando una grilla (1)
+
+```{r fig.height=6}
+ggplot(modelos, aes(a1, a2)) +
+  geom_point(data = filter(modelos, rank(dist) <= 10), size = 4, colour = "red") +
+  geom_point(aes(colour = -dist))
+```
+
+---
+## Usando una grilla (2)
+```{r echo=FALSE}
+grid <- expand.grid(
+  a1 = seq(-5, 20, length = 25),
+  a2 = seq(1, 3, length = 25)
+) %>%
+  mutate(dist = purrr::map2_dbl(a1, a2, sim1_dist))
+
+grid %>%
+  ggplot(aes(a1, a2)) +
+  geom_point(data = filter(grid, rank(dist) <= 10), size = 4, colour = "red") +
+  geom_point(aes(colour = -dist))
+```
+
+---
 Cuando superpones los mejores 10 modelos en los datos originales, se ven bastante bien:
 
-```{r eval=FALSE}
+```{r fig.height=4}
 ggplot(sim1, aes(x, y)) +
   geom_point(size = 2, colour = "grey30") +
   geom_abline(
@@ -170,7 +222,11 @@ ggplot(sim1, aes(x, y)) +
 
 ---
 
-Podrás imaginarte que de forma iterativa puedo hacer la cuadrícula más y más fina hasta reducir los resultados al mejor modelo. Existe una forma mejor de resolver el problema: una herramienta de minimización llamada búsqueda de Newton-Raphson. La intuición detrás de Newton-Raphson es bastante simple: tomas un punto de partida y buscas la pendiente más fuerte en torno a ese punto. Puedes bajar por esa pendiente un poco, para luego repetir el proceso varias veces, hasta que no se puede descender más. En R, esto se puede hacer con la función optim():
+### Conclusión
+
+De forma iterativa se puede hacer la cuadrícula más y más fina hasta reducir los resultados al mejor modelo.
+
+_Existe una forma mejor de resolver el problema:_ una herramienta de minimización llamada __búsqueda de Newton-Raphson__. La intuición detrás de Newton-Raphson es bastante simple: tomas un punto de partida y buscas la pendiente más fuerte en torno a ese punto. Puedes bajar por esa pendiente un poco, para luego repetir el proceso varias veces, hasta que no se puede descender más. __En R, esto se puede hacer con la función optim():__
 
 ```{r}
 best <- optim(c(0, 0), measure_distance, data = sim1)
@@ -187,11 +243,12 @@ ggplot(sim1, aes(x, y)) +
 
 ---
 
-No te preocupes demasiado acerca de los detalles de cómo funciona optim(). La intuición es lo importante en esta parte. Si tienes una función que define la mínima distancia entre un modelo y un conjunto de datos, un algoritmo que pueda minimizar la distancia modificando los parámetros del modelo te permitirá encontrar el mejor modelo. Lo interesante de este enfoque es que funciona con cualquier familia de modelos respecto de la cual se pueda escribir una ecuación que los describa.
+No te preocupes demasiado acerca de los detalles de cómo funciona optim(). La intuición es lo importante. Si tienes una función que define la mínima distancia entre un modelo y un conjunto de datos, un algoritmo que pueda minimizar la distancia modificando los parámetros del modelo te permitirá encontrar el mejor modelo. Lo interesante de este enfoque es que funciona con cualquier familia de modelos respecto de la cual se pueda escribir una ecuación que los describa.
 
 Existe otro enfoque que podemos usar para este modelo, debido a que es un caso especial de una familia más amplia: los modelos lineales. Un modelo lineal es de la forma y = a_1 + a_2 * x_1 + a_3 * x_2 + ... + a_n * x_(n+1). Este modelo simple es equivalente a un modelo lineal generalizado en el que n tiene valor 2 y x_1 es x. R cuenta con una herramienta diseñada especialmente para ajustar modelos lineales llamada lm(). lm() tiene un modo especial de especificar la familia del modelo: las fórmulas. Las fórmulas son similares a y ~ x, que lm() traducirá a una función de la forma y = a_1 + a_2 * x. Podemos ajustar el modelo y mirar la salida:
 
 ---
+# Usando la función lm
 
 ```{r}
 sim1_mod <- lm(y ~ x, data = sim1)
@@ -220,7 +277,7 @@ grid
 ---
 A continuación, graficamos las predicciones. Te preguntarás acerca de todo este trabajo adicional en comparación a usar geom_abline(). Pero la ventaja de este enfoque es que funciona con cualquier modelo en R, desde los más simples a los más complejos. La única limitante son tus habilidades de visualización. Para más ideas respecto de como visualizar modelos complejos, puedes consultar http://vita.had.co.nz/papers/model-vis.html.
 
-```{r}
+```{r fig.height=5}
 ggplot(sim1, aes(x)) +
   geom_point(aes(y = y)) +
   geom_line(aes(y = pred), data = grid, colour = "red", size = 1)
@@ -228,13 +285,22 @@ ggplot(sim1, aes(x)) +
 
 ---
 
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
 ## Residuos
 
-La otra cara de las predicciones son los residuos. Las predicciones te informan de los patrones que el modelo captura y los residuos te dicen lo que el modelo ignora. Los residuos son las distancias entre lo observado y los valores predichos que calculamos anteriormente.
+## Las predicciones te informan de los patrones que el modelo captura y los residuos te dicen lo que el modelo ignora. 
+## Los residuos son las distancias entre lo observado y los valores predichos que calculamos anteriormente.
 
-Agregamos los residuos a los datos con add_residuals(), que funciona de manera similar a add_predictions(). Nota, sin embargo, que usamos el data frame original y no no una grilla manufacturada. Esto es porque para calcular los residuos se necesitan los valores de “y”.
+
 
 ---
+
+## add_residuals()
+Notar que usamos __el data frame original y no no una grilla manufacturada.__´ Esto es porque para calcular los residuos se necesitan los valores de “y”.
+
 
 ```{r}
 sim1 <- sim1 %>%
@@ -243,30 +309,44 @@ sim1
 ```
 
 ---
+## Polígono de frecuencias
 
 Existen diferentes formas de entender qué nos dicen los residuos respecto del modelo. Una forma es dibujar un polígono de frecuencia que nos ayude a entender cómo se propagan los residuos:
 
-```{r}
+```{r fig.height=4}
 ggplot(sim1, aes(resid)) +
   geom_freqpoly(binwidth = 0.5)
 ```
 
 ---
 
-Esto ayuda a calibrar la calidad del modelo: ¿qué tan lejos se encuentran las predicciones de los valores observados? Nota que el promedio del residuo es siempre cero.
+Esto ayuda a calibrar la __calidad del modelo:__ ¿qué tan lejos se encuentran las predicciones de los valores observados? Nota que el promedio del residuo es siempre cero.
 
 A menudo vas a querer crear gráficos usando los residuos en lugar del predictor original. Verás mucho de eso en el capítulo siguiente:
 
-```{r}
+```{r fig.height=4}
 ggplot(sim1, aes(x, resid)) +
   geom_ref_line(h = 0) +
   geom_point()
 ```
 
-Esto parece ser ruido aleatorio, lo que sugiere que el modelo ha hecho un buen trabajo capturando los patrones del conjunto de datos.
 
 ---
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Esto parece ser ruido aleatorio, lo que sugiere que el modelo ha hecho un buen trabajo capturando los patrones del conjunto de datos.
+
+---
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
 ## Fórmulas y familias de modelos
+
+---
+
 
 Ya habrás visto fórmulas anteriormente cuando usamos facet_wrap() y facet_grid(). En R, las fórmulas proveen un modo general de obtener “comportamientos especiales”. En lugar de evaluar los valores de las variables directamente, se capturan los valores para que sean interpretados por una función.
 
@@ -302,6 +382,20 @@ model_matrix(df, y ~ x1 + x2)
 
 ---
 Las siguientes secciones detallan cómo esta notación de fórmulas funciona con variables categóricas, interacciones y transformaciones.
+
+
+
+---
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
+
+# Variables categóricas
+
+
+---
+
 
 ## Variables categóricas
 
@@ -350,7 +444,7 @@ grid
 
 Efectivamente, un modelo con una variable x categórica va a predecir el valor medio para cada categoría. (¿Por qué? porque la media minimiza la raíz de la distancia media cuadrática.) Es fácil de ver si superponemos la predicción sobre los datos originales:
 
-```{r}
+```{r fig.height=6}
 ggplot(sim2, aes(x)) +
   geom_point(aes(y = y)) +
   geom_point(data = grid, aes(y = pred), colour = "red", size = 4)
@@ -367,11 +461,20 @@ tibble(x = "e") %>%
 
 ---
 
-## Interacciones (continuas y categóricas)
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
 
-¿Qué ocurre si combinas una variable continua y una categórica? sim3 contiene un predictor categórico y otro predictor continuo. Podemos visualizarlos con un gráfico simple:
 
-```{r}
+# Interacciones 
+## (continuas y categóricas)
+
+---
+
+
+#### ¿Qué ocurre si combinas una variable continua y una categórica? sim3 contiene un predictor categórico y otro predictor continuo. Podemos visualizarlos con un gráfico simple:
+
+```{r fig.height=6}
 ggplot(sim3, aes(x1, y)) +
   geom_point(aes(colour = x2))
 ```
@@ -385,15 +488,15 @@ mod1 <- lm(y ~ x1 + x2, data = sim3)
 mod2 <- lm(y ~ x1 * x2, data = sim3)
 ```
 
----
+__Cuando agregas variables con + el modelo va a estimar cada efecto independientemente de los demás. Es posible agregar al ajuste lo que se conoce como interacción usando * . __
 
-Cuando agregas variables con + el modelo va a estimar cada efecto independientemente de los demás. Es posible agregar al ajuste lo que se conoce como interacción usando *. Por ejemplo, y ~ x1 * x2 se traduce en y = a_0 + a_1 * x_1 + a_2 * x_2 + a_12 * x_1 * x_2. Observa que si usas *, tanto el efecto interacción como los efectos individuales se incluyen en el modelo.
+Por ejemplo, y ~ x1 * x2 se traduce en y = a_0 + a_1 * x_1 + a_2 * x_2 + a_12 * x_1 * x_2. Observa que si usas *, tanto el efecto interacción como los efectos individuales se incluyen en el modelo.
 
 Para visualizar estos modelos necesitamos dos nuevos trucos:
 
-1. Tenemos dos predictores, por lo que necesitamos pasar ambas variables a data_grid(). Esto encontrará todos los valores únicos de x1 y x2 y luego generará todas las combinaciones,
+1. Tenemos dos predictores, por lo que necesitamos pasar ambas variables a __data_grid()__. Esto encontrará todos los valores únicos de x1 y x2 y luego generará todas las combinaciones,
 
-2. Para generar predicciones de ambos modelos simultáneamente, podemos usar gather_predictions() que incorpora cada predicción como una fila. El complemento de gather_predictions() es spread_predictions() que incluye cada predicción en una nueva columna.
+2. Para generar predicciones de ambos modelos simultáneamente, podemos usar __gather_predictions()__ que incorpora cada predicción como una fila. El complemento de __gather_predictions()__ es __spread_predictions()__ que incluye cada predicción en una nueva columna.
 
 ---
 
@@ -410,7 +513,7 @@ grid
 
 Podemos visualizar los resultados de ambos modelos en un gráfico usando separando en facetas:
 
-```{r}
+```{r fig.height=6}
 ggplot(sim3, aes(x1, y, colour = x2)) +
   geom_point() +
   geom_line(data = grid, aes(y = pred)) +
@@ -418,14 +521,18 @@ ggplot(sim3, aes(x1, y, colour = x2)) +
 ```
 
 ---
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
 
-Observa que el modelo que usa + tiene la misma pendiente para cada recta, pero distintos interceptos (u ordenadas al origen). El modelo que usa * tiene distinta pendiente e intercepto.
+## Modelo con (+): misma pendiente pero distinta ordenada al origen.
+## Modelo con (*): distinta pendiente y distinta ordenada al origen.
 
-¿Qué modelo es el más adecuado para los datos? Podemos mirar los residuos. Aquí hemos separado facetas por modelo y por x2ya que facilita ver el patrón dentro de cada grupo.
+## ¿Qué modelo es el más adecuado? Miramos los residuos. 
 
 ---
 
-```{r}
+```{r fig.height=6}
 sim3 <- sim3 %>%
   gather_residuals(mod1, mod2)
 
@@ -433,12 +540,29 @@ ggplot(sim3, aes(x1, resid, colour = x2)) +
   geom_point() +
   facet_grid(model ~ x2)
 ```
+  
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Conclusión
+
+## Residuos de mod1 tienen patrones ignorados en b, y un poco menos ignorados en c y d. 
+## Residuos de mod2, un patrón poco obvio
+## ¿Existe una forma precisa de determinar si mod1 o mod2 es mejor? Sí, pero no la trataremos. 
+## Nos interesa evaluar cualitativamente si el modelo ha capturado los patrones que nos interesan.
+
 
 ---
 
-## Conclusión
-Existe un patrón poco obvio en los residuos de mod2. Los residuos de mod1 muestran que el modelo tiene algunos patrones ignorados en b, y un poco menos ignorados en c y d. Quizá te preguntas si existe una forma precisa de determinar si acaso mod1 o mod2 es mejor. Existe, pero requiere un respaldo matemático fuerte y no nos preocuparemos de eso. Lo que aquí interesa es evaluar cualitativamente si el modelo ha capturado los patrones que nos interesan.
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
 
+
+# Valores faltantes
 
 ---
 
@@ -475,11 +599,15 @@ nobs(mod)
 ```
 
 ---
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
 
-## Otras familias de modelos
 
+# Otras familias de modelos
 
-Otras familias de modelos
+---
+#Otras familias de modelos(1)
 
 Este capítulo se centró de forma exclusiva en la familia de modelos lineales, la cual asume una relación de la forma y = a_1 * x1 + a_2 * x2 + ... + a_n * xn. Además, los modelos lineales asumen que los residuos siguen una distribución normal, algo de lo que no hemos hablado. Existe un amplio conjunto de familias de modelos que extienden la familia de modelos lineales de varias formas interesantes. Algunos son:
 
@@ -487,12 +615,12 @@ Este capítulo se centró de forma exclusiva en la familia de modelos lineales, 
 
 * Modelos generalizados aditivos, es decir, mgcv::gam(), extienden los modelos lineales generalizados para incorporar funciones suaves arbitrarias. Esto significa que puedes escribir una fórmula del tipo y ~ s(x) que se transforma en una ecuación de la forma y = f(x) y dejar que gam() estime la función (sujeto a algunas restricciones de suavidad para que el problema sea manejable).
 
+
+
 ---
+#Otras familias de modelos(2)
 
 * Modelos lineales penalizados, es decir, glmnet::glmnet(), incorporan un término de penalización a la distancia y así penalizan modelos complejos (definidos por la distancia entre el vector de parámetros y el origen). Esto tiende a entregar modelos que generalizan mejor respecto de nuevos conjuntos de datos para la misma población.
 
 * Modelos lineales robustos, es decir, MASS:rlm(), modifican la distancia para restar importancia a los puntos que quedan muy alejados. Esto resulta en modelos menos sensibles a valores extremos, con el inconveniente de que no son muy buenos cuando no hay valores extremos.
-
----
-
 * Árboles, es decir, rpart::rpart(), atacan un problema de un modo totalmente distinto a los modelos lineales. Ajustan un modelo constante por partes, dividiendo los datos en partes progresivamente más y más pequeñas. Los árboles no son tremendamente efectivos por sí solos, pero son muy poderosos cuando se usan en modelos agregados como bosques aleatorios, del inglés random forests), (es decir, randomForest::randomForest()) o máquinas aceleradoras de gradiente, del inglés gradient boosting machines (es decir, xgboost::xgboost.).

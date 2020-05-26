@@ -50,11 +50,27 @@ options(na.action = na.warn)
 
 ---
 
-# ¿Por qué los diamantes de baja calidad son más caros?
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
+# ¿Por qué los diamantes 
+# de baja calidad son más caros?
 
 ---
 
-En el capítulo anterior vimos una sorprendente relación entre la calidad de los diamantes y su precio: diamantes de baja calidad (cortes pobres, colores malos, y claridad inferior) tienen más altos precios.
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+## En el capítulo anterior vimos una sorprendente relación entre
+
+## calidad de los diamantes y su precio
+
+## diamantes de baja calidad (cortes pobres, colores malos, y claridad inferior) tienen más altos precios.
+
+---
 
 
 
@@ -84,9 +100,18 @@ ggplot(diamantes, aes(claridad, precio)) + geom_boxplot()
 
 ---
 
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
 ## Precio y quilates
 
-Pareciera que los diamantes de menor calidad tiene precios más altos porque hay una importante variable de confusión: el peso (carat) del diamante. El peso del diamante es el factor individual más importante para determinar el precio del diamante, y los diamantes de menor calidad tienden a ser más grandes.
+## Pareciera que los diamantes de menor calidad tiene precios más altos porque hay una importante variable de confusión: el peso (carat) del diamante. 
+
+## El peso del diamante es el factor individual más importante para determinar el precio del diamante, y los diamantes de menor calidad tienden a ser más grandes.
+
+---
 
 
 ```r
@@ -98,9 +123,11 @@ ggplot(diamantes, aes(quilate, precio)) +
 
 ---
 
-Hagamos algunos ajustes al conjunto de datos de diamantes para que sea más fácil trabajar con ellos:
+# Hagamos algunos ajustes al conjunto de datos de diamantes 
 
-1. Foco en los diamantes más pequeños que 2.5 quilates (99.7% de los datos).
+### 1. Foco en los diamantes más pequeños que 2.5 quilates (99.7% de los datos).
+
+### 2. Hacer una transformación logarítmica de las variables quilates y precio. 
 
 
 ```r
@@ -110,7 +137,7 @@ diamantes2 &lt;- diamantes %&gt;%
 ```
 
 ---
-2. Hacer una transformación logarítmica de las variables quilates y precio.
+
 
 
 ```r
@@ -146,18 +173,21 @@ ggplot(diamantes2, aes(quilate, precio)) +
   geom_line(data = cuadricula, colour = "red", size = 1)
 ```
 
----
-
-![](24-pres_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+![](24-pres_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
 
 
 ---
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
 
-Si creemos en nuestro modelo, los diamantes grandes son mucho más baratos que lo esperado. Esto es posiblemente porque ninguno de los diamantes de estos datos cuesta más de US$19,000.
 
-Ahora podemos ver los residuos, lo cual comprueba que hemos eliminado el patrón lineal fuerte:
+## Si creemos en nuestro modelo, los diamantes grandes son mucho más baratos que lo esperado. Esto es posiblemente porque ninguno de los diamantes de estos datos cuesta más de US$19,000.
 
 ---
+
+## Residuos
+Esto comprueba que hemos eliminado el patrón lineal fuerte:
 
 
 ```r
@@ -168,7 +198,7 @@ ggplot(diamantes2, aes(log_quilates, lresid)) +
   geom_hex(bins = 50)
 ```
 
-![](24-pres_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+![](24-pres_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
 
 
 ---
@@ -180,7 +210,7 @@ Es importante destacar que ahora podemos volver a hacer nuestros gráficos motiv
 ggplot(diamantes2, aes(corte, lresid)) + geom_boxplot()
 ```
 
-![](24-pres_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+![](24-pres_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -189,7 +219,7 @@ ggplot(diamantes2, aes(corte, lresid)) + geom_boxplot()
 ggplot(diamantes2, aes(color, lresid)) + geom_boxplot()
 ```
 
-![](24-pres_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+![](24-pres_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
 
 
 ---
@@ -198,13 +228,556 @@ ggplot(diamantes2, aes(color, lresid)) + geom_boxplot()
 ggplot(diamantes2, aes(claridad, lresid)) + geom_boxplot()
 ```
 
-![](24-pres_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+![](24-pres_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
 
 ---
 
-Ahora vemos la relación que esperábamos: a medida que aumenta la calidad del diamante, también lo hace su precio relativo. Para interpretar el eje y, necesitamos pensar que nos dicen los residuos, y en que escala están. Un residuo de -1 indica que log_precio era 1 unidad más baja que la predicción basada únicamente en su peso. 2−1 es 1/2, los puntos con un valor de -1 son la mitad del precio esperado, y los residuos con el valor 1 son el doble del precio predicho.
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+## Ahora vemos la relación que esperábamos: a medida que aumenta la calidad del diamante, también lo hace su precio relativo. Para interpretar el eje y, necesitamos pensar que nos dicen los residuos, y en que escala están. Un residuo de -1 indica que log_precio era 1 unidad más baja que la predicción basada únicamente en su peso. 2−1 es 1/2, los puntos con un valor de -1 son la mitad del precio esperado, y los residuos con el valor 1 son el doble del precio predicho.
 
 ---
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
+## Un modelo más complicado
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+## Podríamos incluir 
+## color, corte, y claridad en el modelo 
+## para que también hagamos explícito el efecto de esas tres variables categóricas
+
+---
+
+
+```r
+mod_diamantes2 &lt;- lm(log_precio ~ log_quilates 
+                    + color + corte + claridad, data = diamantes2)
+```
+
+Este modelo ahora incluye **cuatro predictores**, por lo que es más difícil de visualizar. Afortunadamente, todos ellos son actualmente independientes lo que significa que podemos graficarlos individualmente en cuatro gráficos.
+
+
+Para hacer el proceso más fácil, vamos a usar el argumento .model en data_grid:
+
+
+```r
+cuadricula &lt;- diamantes2 %&gt;% 
+  data_grid(corte, .model = mod_diamantes2) %&gt;% 
+  add_predictions(mod_diamantes2)
+cuadricula
+```
+
+```
+## # A tibble: 5 x 5
+##   corte     log_quilates color claridad  pred
+##   &lt;ord&gt;            &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 Regular         -0.515 G     VS2       11.2
+## 2 Bueno           -0.515 G     VS2       11.3
+## 3 Muy bueno       -0.515 G     VS2       11.4
+## 4 Premium         -0.515 G     VS2       11.4
+## 5 Ideal           -0.515 G     VS2       11.4
+```
+
+---
+
+
+```r
+ggplot(cuadricula, aes(corte, pred)) + 
+  geom_point()
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+---
+
+Si el modelo necesita variables que no has suministrado, data_grid() automáticamente los rellenará con el valor “typical”. Para variables continuas, se usa la mediana, y para variables categóricas se usa el valor más frecuente (o valores, si hay un empate).
+
+
+```r
+diamantes2 &lt;- diamantes2 %&gt;% 
+  add_residuals(mod_diamantes2, "lresid2")
+```
+
+
+---
+
+
+```r
+ggplot(diamantes2, aes(log_quilates, lresid2)) + 
+  geom_hex(bins = 50)
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+
+---
+
+Este gráfico indica que hay algunos diamantes con residuos bastante grandes - recuerda que un residuo de 2 indica que el diamante es 4x el precio que esperábamos. A menudo es útil mirar los valores inusuales individualmente:
+
+
+```r
+diamantes2 %&gt;% 
+  filter(abs(lresid2) &gt; 1) %&gt;% 
+  add_predictions(mod_diamantes2) %&gt;% 
+  mutate(pred = round(2 ^ pred)) %&gt;% 
+  select(precio, pred, quilate:tabla, x:z) %&gt;% 
+  arrange(precio)
+```
+
+```
+## # A tibble: 16 x 11
+##    precio  pred quilate corte color claridad profundidad tabla     x     y     z
+##     &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;ord&gt; &lt;ord&gt; &lt;ord&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1   1013   264   0.25  Regu… F     SI2             54.4    64  4.3   4.23  2.32
+##  2   1186   284   0.25  Prem… G     SI2             59      60  5.33  5.28  3.12
+##  3   1186   284   0.25  Prem… G     SI2             58.8    60  5.33  5.28  3.12
+##  4   1262  2644   1.03  Regu… E     I1              78.2    54  5.72  5.59  4.42
+##  5   1415   639   0.35  Regu… G     VS2             65.9    54  5.57  5.53  3.66
+##  6   1415   639   0.35  Regu… G     VS2             65.9    54  5.57  5.53  3.66
+##  7   1715   576   0.32  Regu… F     VS2             59.6    60  4.42  4.34  2.61
+##  8   1776   412   0.290 Regu… F     SI1             55.8    60  4.48  4.41  2.48
+##  9   2160   314   0.34  Regu… F     I1              55.8    62  4.72  4.6   2.6 
+## 10   2366   774   0.3   Muy … D     VVS2            60.6    58  4.33  4.35  2.63
+## 11   3360  1373   0.51  Prem… F     SI1             62.7    62  5.09  4.96  3.15
+## 12   3807  1540   0.61  Bueno F     SI2             62.5    65  5.36  5.29  3.33
+## 13   3920  1705   0.51  Regu… F     VVS2            65.4    60  4.98  4.9   3.23
+## 14   4368  1705   0.51  Regu… F     VVS2            60.7    66  5.21  5.11  3.13
+## 15  10011  4048   1.01  Regu… D     SI2             64.6    58  6.25  6.2   4.02
+## 16  10470 23622   2.46  Prem… E     SI2             59.7    59  8.82  8.76  5.25
+```
+
+---
+
+Hasta aquí nada realmente interesante, pero probablemente valga la pena pasar tiempo considerando si esto significa un problema con nuestro modelo, o si hay errores en los datos. Si hay errores en los datos, esta podría ser una oportunidad para comprar diamantes que fueron incorrectamente tasados con valor bajo.
+
+---
+
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
+# ¿Qué afecta 
+# el número de vuelos diarios?
+
+---
+
+### Dataset: vuelos
+
+* Trabajaremos con un conjunto de datos que parece aún más simple a primera vista: el número de vuelos que salen de NYC por día. 
+* Dimensiones — solo 365 filas y 2 columnas — 
+* Comenzaremos contando el __número de vuelos por día__ y visualizándolos con ggplot2.
+
+
+
+```r
+vuelos_por_dia &lt;- vuelos %&gt;% 
+  mutate(fecha = make_date(anio, mes, dia)) %&gt;% 
+  group_by(fecha) %&gt;% 
+  summarise(n = n())
+vuelos_por_dia
+```
+
+```
+## # A tibble: 365 x 2
+##    fecha          n
+##    &lt;date&gt;     &lt;int&gt;
+##  1 2013-01-01   842
+##  2 2013-01-02   943
+##  3 2013-01-03   914
+##  4 2013-01-04   915
+##  5 2013-01-05   720
+##  6 2013-01-06   832
+##  7 2013-01-07   933
+##  8 2013-01-08   899
+##  9 2013-01-09   902
+## 10 2013-01-10   932
+## # … with 355 more rows
+```
+
+
+---
+
+
+```r
+ggplot(vuelos_por_dia, aes(fecha, n)) + 
+  geom_line()
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+
+---
+
+###  Día de la semana
+
+```r
+vuelos_por_dia &lt;- vuelos_por_dia %&gt;% 
+  mutate(dia_semana = wday(fecha, label = TRUE))
+ggplot(vuelos_por_dia, aes(dia_semana, n)) + 
+  geom_boxplot()
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Hay pocos vuelos los fines de semana porque la mayoría de los viajes son por negocios. El efecto es particularmente pronunciado el sábado.
+
+---
+
+## Modelo Lineal
+Una forma de eliminar este fuerte patrón es usar un modelo. Primero, ajustamos el modelo, y mostraremos sus predicciones superpuestas sobre los datos originales:
+
+
+```r
+mod &lt;- lm(n ~ dia_semana, data = vuelos_por_dia)
+
+cuadricula &lt;- vuelos_por_dia %&gt;% 
+  data_grid(dia_semana) %&gt;% 
+  add_predictions(mod, "n")
+```
+
+---
+
+
+```r
+ggplot(vuelos_por_dia, aes(dia_semana, n)) + 
+  geom_boxplot() +
+  geom_point(data = cuadricula, colour = "red", size = 4)
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+
+
+---
+
+### Visualizamos los residuos
+
+Notar el cambio en el eje Y: ahora estamos viendo el desvío desde el número de vuelos esperados, dado el día de la semana. Este gráfico es útil porque ahora que removimos la mayor parte del efecto día de la semana, podemos ver algo de los patrones más sutiles que quedan:
+
+Nuestro modelo parece fallar a partir de junio: todavía se puede ver un patrón regular fuerte que nuestro modelo no ha capturado.
+
+
+```r
+vuelos_por_dia &lt;- vuelos_por_dia %&gt;% 
+  add_residuals(mod)
+vuelos_por_dia %&gt;% 
+  ggplot(aes(fecha, resid)) + 
+  geom_ref_line(h = 0) + 
+  geom_line()
+```
+
+---
+
+
+
+![](24-pres_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+
+
+---
+
+
+```r
+ggplot(vuelos_por_dia, aes(fecha, resid, colour = dia_semana)) + 
+  geom_ref_line(h = 0) + 
+  geom_line()
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+## Nuestro modelo falla en predecir con precisión el número de vuelos los sábados: durante el verano hay más vuelos de los que esperamos, y durante el otoño hay menos. 
+
+---
+Veremos como podemos capturar mejor este patrón 
+Hay algunos días con mucho menos vuelos que los esperados:
+
+
+```r
+vuelos_por_dia %&gt;% 
+  filter(resid &lt; -100)
+```
+
+```
+## # A tibble: 11 x 4
+##    fecha          n dia_semana resid
+##    &lt;date&gt;     &lt;int&gt; &lt;ord&gt;      &lt;dbl&gt;
+##  1 2013-01-01   842 mar        -109.
+##  2 2013-01-20   786 dom        -105.
+##  3 2013-05-26   729 dom        -162.
+##  4 2013-07-04   737 jue        -229.
+##  5 2013-07-05   822 vie        -145.
+##  6 2013-09-01   718 dom        -173.
+##  7 2013-11-28   634 jue        -332.
+##  8 2013-11-29   661 vie        -306.
+##  9 2013-12-24   761 mar        -190.
+## 10 2013-12-25   719 mié        -244.
+## 11 2013-12-31   776 mar        -175.
+```
+
+---
+
+Hay una tendencia más suave a largo plazo en el transcurso del año. Podemos destacar esa tendencia con __geom_smooth():__
+
+
+```r
+vuelos_por_dia %&gt;% 
+  ggplot(aes(fecha, resid)) + 
+  geom_ref_line(h = 0) + 
+  geom_line(colour = "grey50") + 
+  geom_smooth(se = FALSE, span = 0.20)
+```
+
+```
+## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Hay menos vuelos en enero (y diciembre), y más en verano (May-Sep). 
+
+## No podemos hacer mucho cuantitativamente con este patrón, porque sólo tenemos un año de datos. Pero podemos usar nuestro conocimiento para pensar en posibles explicaciones.
+
+---
+
+## Efecto estacional del sábado
+
+abordaremos nuestra falla para predecir con exactitud el número de vuelos el sábado. Un buen lugar para empezar es volver a los números originales, enfocándonos en el sábado:
+
+
+```r
+vuelos_por_dia %&gt;% 
+  filter(dia_semana == "Sat") %&gt;% 
+  ggplot(aes(fecha, n)) + 
+    geom_point() + 
+    geom_line() +
+    scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b")
+```
+
+---
+
+![Caption for the picture](img/saturday1.png)
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+### Sospecho que este patrón es causado por las vacaciones de invierno: mucha gente va de vacaciones en verano, y a las personas no les importa viajar un sábado en sus vacaciones. 
+
+## Al mirar este gráfico, podemos suponer que las vacaciones de verano son de principio de junio a finales de agosto. Parece que se alinea bastante bien con el calendario escolar del estado de NY: las vacaciones de verano en 2013 fueron del 26 de junio hasta el 9 de septiembre.
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+### ¿Por qué hay más vuelos los sábados en primavera que en otoño? 
+
+
+### Es menos común planificar vacaciones familiares durante el otoño porque debido a los grandes feriados de Acción de Gracias y Navidad. No tenemos los datos para estar seguros, pero parecería una hipótesis de trabajo razonable.
+
+### Vamos a crear la variable “trimestre” que capture aproximadamente los tres períodos escolares, y verificamos nuestro trabajo con un gráfico
+
+---
+
+```r
+trimestre &lt;- function(fecha) {
+  cut(fecha, 
+    breaks = ymd(20130101, 20130605, 20130825, 20140101),
+    labels = c("primavera", "verano", "otoño")
+  )
+}
+
+vuelos_por_dia &lt;- vuelos_por_dia %&gt;% 
+  mutate(trimestre = trimestre(fecha)) 
+
+vuelos_por_dia %&gt;% 
+  filter(dia_semana == "Sat") %&gt;% 
+  ggplot(aes(fecha, n, colour = trimestre)) +
+  geom_point(alpha = 1/3) + 
+  geom_line() +
+  scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b")
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
+
+
+---
+
+![Caption for the picture](img/saturday2.png)
+
+
+
+---
+
+Es útil ver como esta nueva variable afecta los otros días de la semana:
+
+
+```r
+vuelos_por_dia %&gt;% 
+  ggplot(aes(dia_semana, n, colour = trimestre)) +
+    geom_boxplot()
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+
+
+---
+## Consideramos el trimestre
+Parece que hay una variación significativa entre los periodos, por lo que es razonable ajustar el efecto de los días de la semana por separado para cada período. Esto mejora nuestro modelo, pero no tanto como podríamos esperar:
+
+
+```r
+mod1 &lt;- lm(n ~ dia_semana, data = vuelos_por_dia)
+mod2 &lt;- lm(n ~ dia_semana * trimestre, data = vuelos_por_dia)
+
+vuelos_por_dia %&gt;% 
+  gather_residuals(sin_trimestre = mod1, con_trimestre = mod2) %&gt;% 
+  ggplot(aes(fecha, resid, colour = model)) +
+    geom_line(alpha = 0.75)
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-34-1.png)&lt;!-- --&gt;
+
+---
+
+Podemos ver el problema al superponer las predicciones del modelo a los datos crudos:
+
+
+```r
+cuadricula &lt;- vuelos_por_dia %&gt;% 
+  data_grid(dia_semana, trimestre) %&gt;% 
+  add_predictions(mod2, "n")
+
+ggplot(vuelos_por_dia, aes(dia_semana, n)) +
+  geom_boxplot() + 
+  geom_point(data = cuadricula, colour = "red") + 
+  facet_wrap(~ trimestre)
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Nuestro modelo esta encontrando el efecto mean , pero tenemos muchos valores atípicos grandes, por lo tanto la media tiende a estar lejos de los valores atípicos. Podemos aliviar este problema usando un modelo que es más robusto a los efectos de los valores atípicos. 
+
+---
+
+#### Un modelo más robusto:  `MASS::rlm()` 
+Esto reduce en gran medida el impacto de los valores atípicos en nuestras estimaciones, y proporciona un modelo que hace un buen trabajo eliminando el patrón del día de la semana
+  
+
+```r
+mod3 &lt;- MASS::rlm(n ~ dia_semana * trimestre, data = vuelos_por_dia)
+
+vuelos_por_dia %&gt;% 
+  add_residuals(mod3, "resid") %&gt;% 
+  ggplot(aes(fecha, resid)) + 
+  geom_hline(yintercept = 0, size = 2, colour = "white") + 
+  geom_line()
+```
+
+![](24-pres_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+
+---
+
+## Variables calculadas
+
+Si estas experimentando con muchos modelos y muchas visualizaciones, es una buena idea agrupar la creación de variables en una función para que no haya posibilidad de aplicar accidentalmente transformaciones a diferentes lugares. Por ejemplo, podríamos escribir:
+
+
+```r
+compute_vars &lt;- function(data) {
+  data %&gt;% 
+    mutate(
+      trimestre = trimestre(date), 
+      dia_semana = wday(date, label = TRUE)
+    )
+}
+```
+
+---
+
+Otra opción es colocar las transformaciones directamente en la fórmula del modelo:
+
+
+```r
+dia_semana2 &lt;- function(x) wday(x, label = TRUE)
+mod3 &lt;- lm(n ~ dia_semana2(fecha) * trimestre(fecha), data = vuelos_por_dia)
+```
+
+Cualquiera de los enfoques es razonable. Hacer que una variable transformada sea explicita es útil si quieres verificar tu trabajo, o usarlas en una visualización. Pero no puedes usar fácilmente transformaciones (como splines) que devuelven múltiples columnas. Incluir las transformaciones en el modelo hace la vida más fácil cuando se trabaja con diferentes conjuntos de datos porque el modelo es autónomo.
+
+---
+
+## Época del año: un enfoque alternativo
+
+En la sección anterior usamos nuestro conocimiento (como el calendario escolar de Estados Unidos afecta el viaje) para mejorar el modelo. Una alternativa es utilizar nuestro conocimiento explícito en el modelo para darle a los datos más espacio para hablar. Podríamos utilizar un modelo más flexible y permitir que capture el patrón que nos interesa. Una tendencia lineal simple no es adecuada, por lo que podríamos intentar usar una spline natural para ajustarnos a una curva suave durante el año:
+
+---
+
+
+```r
+library(splines)
+mod &lt;- MASS::rlm(n ~ dia_semana * ns(fecha, 5), data = vuelos_por_dia)
+
+vuelos_por_dia %&gt;% 
+  data_grid(dia_semana, fecha = seq_range(fecha, n = 13)) %&gt;% 
+  add_predictions(mod) %&gt;% 
+  ggplot(aes(fecha, pred, colour = dia_semana)) + 
+    geom_line() +
+    geom_point()
+```
+
+
+---
+![](24-pres_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## Vemos un patrón fuerte en el número de vuelos de los sábados. 
+## Esto es tranquilizador, porque también vimos ese patrón en los datos sin transformar. 
+## Es una buena señal cuando obtenemos la misma señal desde diferentes enfoques.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
