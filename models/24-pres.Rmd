@@ -642,7 +642,7 @@ vuelos_por_dia %>%
     geom_line() +
     geom_point()
 ```
-
+    
 
 ---
 ```{r echo=FALSE}

@@ -58,9 +58,8 @@ En este capítulo usaremos el paquete modelr que tiene las funciones de modelado
 
 
 ```r
-library(tidyverse)
-
-library(modelr)
+*library(tidyverse)
+*library(modelr)
 options(na.action = na.warn)
 ```
 
@@ -176,18 +175,18 @@ modelos
 
 ```
 ## # A tibble: 250 x 3
-##       a1     a2  dist
-##    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-##  1 12.2  -1.16  13.5 
-##  2  6.28 -3.85  34.8 
-##  3 23.5   4.46  33.3 
-##  4 36.5   3.61  41.1 
-##  5  3.27 -3.11  33.0 
-##  6  9.23  1.86   4.51
-##  7 12.9  -2.04  18.3 
-##  8 31.1  -2.38  13.1 
-##  9 17.6  -0.628  8.10
-## 10 35.0   2.74  34.7 
+##        a1     a2  dist
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1  14.7  -1.76  15.3 
+##  2 -11.0   4.75   8.04
+##  3   1.54 -4.07  40.4 
+##  4  20.4  -0.127  7.81
+##  5 -15.3  -3.09  50.1 
+##  6  34.0   4.54  44.1 
+##  7  -1.25  2.87   3.32
+##  8  24.2  -2.45  14.0 
+##  9   6.00 -0.457 14.2 
+## 10  18.5   1.24  10.3 
 ## # … with 240 more rows
 ```
 
@@ -243,7 +242,7 @@ ggplot(sim1, aes(x, y)) +
 
 ---
 
-### Conclusión
+### `optim()` 
 
 De forma iterativa se puede hacer la cuadrícula más y más fina hasta reducir los resultados al mejor modelo.
 
@@ -277,12 +276,12 @@ No te preocupes demasiado acerca de los detalles de cómo funciona optim(). La i
 Existe otro enfoque que podemos usar para este modelo, debido a que es un caso especial de una familia más amplia: los modelos lineales. Un modelo lineal es de la forma y = a_1 + a_2 * x_1 + a_3 * x_2 + ... + a_n * x_(n+1). Este modelo simple es equivalente a un modelo lineal generalizado en el que n tiene valor 2 y x_1 es x. R cuenta con una herramienta diseñada especialmente para ajustar modelos lineales llamada lm(). lm() tiene un modo especial de especificar la familia del modelo: las fórmulas. Las fórmulas son similares a y ~ x, que lm() traducirá a una función de la forma y = a_1 + a_2 * x. Podemos ajustar el modelo y mirar la salida:
 
 ---
-# Usando la función lm
+# Usando la función `lm()` 
 
 
 ```r
-sim1_mod &lt;- lm(y ~ x, data = sim1)
-coef(sim1_mod)
+*sim1_mod &lt;- lm(y ~ x, data = sim1)
+*coef(sim1_mod)
 ```
 
 ```
@@ -292,7 +291,7 @@ coef(sim1_mod)
 
 ---
 
-## Visualizando modelos
+## Visualizando modelos `data_grid()` 
 
 
 ```r
@@ -320,10 +319,11 @@ grid
 
 ---
 
+## `add_prediction()` 
 
 ```r
 grid &lt;- grid %&gt;%
-  add_predictions(sim1_mod)
+* add_predictions(sim1_mod)
 grid
 ```
 
@@ -370,7 +370,7 @@ class: center, middle
 
 ---
 
-## add_residuals()
+## `add_residuals()` 
 Notar que usamos __el data frame original y no una grilla manufacturada.__´ Esto es porque para calcular los residuos se necesitan los valores de “y”.
 
 
@@ -399,7 +399,7 @@ sim1
 ```
 
 ---
-## Polígono de frecuencias
+## Polígono de frecuencias `geom_freqpoly()` 
 
 Existen diferentes formas de entender qué nos dicen los residuos respecto del modelo. Una forma es dibujar un polígono de frecuencia que nos ayude a entender cómo se propagan los residuos:
 
@@ -519,7 +519,7 @@ class: center, middle
 ---
 
 
-## Variables categóricas
+## Variables categóricas 
 
 
 Generar una función a partir de una fórmula es directo cuando el predictor es una variable continua, pero las cosas son más complicadas cuando el predictor es una variable categórica. Imagina que tienes una fórmula como y ~ sexo, donde el sexo puede ser hombre o mujer. No tiene sentido convertir a una fórmula del tipo y = x_0 + x_1 * sexo debido a que sexo no es un número - ¡no se puede multiplicar! En su lugar, lo que R hace es convertir a y = x_0 + x_1 * sexo_hombre donde sexo_hombre tiene valor 1 si sexo corresponde a hombre y cero a mujer:
@@ -653,7 +653,7 @@ Para visualizar estos modelos necesitamos dos nuevos trucos:
 2. Para generar predicciones de ambos modelos simultáneamente, podemos usar __gather_predictions()__ que incorpora cada predicción como una fila. El complemento de __gather_predictions()__ es __spread_predictions()__ que incluye cada predicción en una nueva columna.
 
 ---
-
+## `gather_predictions()` 
 Esto combinado nos da:
 
 
