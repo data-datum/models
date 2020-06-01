@@ -300,7 +300,7 @@ grid
 ```
 
 ---
-A continuación, graficamos las predicciones. Te preguntarás acerca de todo este trabajo adicional en comparación a usar geom_abline(). Pero la ventaja de este enfoque es que funciona con cualquier modelo en R, desde los más simples a los más complejos. La única limitante son tus habilidades de visualización. Para más ideas respecto de como visualizar modelos complejos, puedes consultar http://vita.had.co.nz/papers/model-vis.html.
+A continuación, graficamos las predicciones. Te preguntarás acerca de todo este trabajo adicional en comparación a usar geom_abline(). Pero la ventaja de este enfoque es que funciona con cualquier modelo en R, desde los más simples a los más complejos. Para más ideas respecto de como visualizar modelos complejos, puedes consultar http://vita.had.co.nz/papers/model-vis.html.
 
 ```{r fig.height=5}
 ggplot(sim1, aes(x)) +
@@ -342,7 +342,7 @@ Existen diferentes formas de entender qué nos dicen los residuos respecto del m
 ggplot(sim1, aes(resid)) +
   geom_freqpoly(binwidth = 0.5) #<<
 ```
-
+  
 ---
 
 Esto ayuda a calibrar la __calidad del modelo:__ ¿qué tan lejos se encuentran las predicciones de los valores observados? Nota que el promedio del residuo es siempre cero.
@@ -637,7 +637,7 @@ background-size: cover
 class: center, middle
 
 
-# Set de datos
+# Set de datos (modelr)
 
 ### sim1: modelización lineal
 
@@ -647,7 +647,5 @@ class: center, middle
 
 ---
 
-
----
 
 

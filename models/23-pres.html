@@ -177,16 +177,16 @@ modelos
 ## # A tibble: 250 x 3
 ##        a1     a2  dist
 ##     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-##  1  13.5  -1.23  13.0 
-##  2  26.2   0.662 15.0 
-##  3 -11.3  -0.118 28.3 
-##  4 -19.7  -4.64  63.7 
-##  5  21.4  -0.145  8.36
-##  6   9.88 -4.41  35.2 
-##  7  29.8   1.72  23.8 
-##  8  37.8   1.29  29.6 
-##  9   5.62 -4.08  36.8 
-## 10  36.7  -3.71  16.7 
+##  1  24.0  -4.47  24.8 
+##  2   4.91 -3.34  32.9 
+##  3  -7.60  0.496 21.0 
+##  4  34.9  -4.18  18.4 
+##  5  -2.78  0.876 14.0 
+##  6 -15.7  -4.77  60.7 
+##  7  -5.27 -0.971 27.6 
+##  8  29.9   4.68  40.9 
+##  9  -4.23  3.33   4.48
+## 10   7.50 -3.30  30.4 
 ## # … with 240 more rows
 ```
 
@@ -278,7 +278,7 @@ ggplot(sim1, aes(x, y)) +
 
 Existe otro enfoque que podemos usar para este modelo, debido a que es un caso especial de una familia más amplia: los modelos lineales. Un modelo lineal es de la forma y = a_1 + a_2 * x_1 + a_3 * x_2 + ... + a_n * x_(n+1). Este modelo simple es equivalente a un modelo lineal generalizado en el que n tiene valor 2 y x_1 es x. 
 
-#### R cuenta con una herramienta diseñada especialmente para ajustar modelos lineales llamada lm(). lm() tiene un modo especial de especificar la familia del modelo: las fórmulas. Las fórmulas son similares a y ~ x, que lm() traducirá a una función de la forma y = a_1 + a_2 * x. Podemos ajustar el modelo y mirar la salida:
+#### R cuenta con una herramienta diseñada especialmente para ajustar modelos lineales llamada lm(). lm() tiene un modo especial de especificar la familia del modelo: las fórmulas. Las fórmulas son similares a y ~ x, que lm() traducirá a una función de la forma y = a_1 + a_2 * x. Podemos ajustar el modelo y mirar la salida.
 
 ---
 # Usando la función `lm()` 
@@ -369,7 +369,7 @@ grid
 ```
 
 ---
-A continuación, graficamos las predicciones. Te preguntarás acerca de todo este trabajo adicional en comparación a usar geom_abline(). Pero la ventaja de este enfoque es que funciona con cualquier modelo en R, desde los más simples a los más complejos. La única limitante son tus habilidades de visualización. Para más ideas respecto de como visualizar modelos complejos, puedes consultar http://vita.had.co.nz/papers/model-vis.html.
+A continuación, graficamos las predicciones. Te preguntarás acerca de todo este trabajo adicional en comparación a usar geom_abline(). Pero la ventaja de este enfoque es que funciona con cualquier modelo en R, desde los más simples a los más complejos. Para más ideas respecto de como visualizar modelos complejos, puedes consultar http://vita.had.co.nz/papers/model-vis.html.
 
 
 ```r
@@ -435,7 +435,7 @@ ggplot(sim1, aes(resid)) +
 ```
 
 ![](23-pres_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
-
+  
 ---
 
 Esto ayuda a calibrar la __calidad del modelo:__ ¿qué tan lejos se encuentran las predicciones de los valores observados? Nota que el promedio del residuo es siempre cero.
@@ -791,16 +791,13 @@ background-size: cover
 class: center, middle
 
 
-# Set de datos
+# Set de datos (modelr)
 
 ### sim1: modelización lineal
 
 ### sim2: modelización de variables categóricas
 
 ### sim3: modelización de interacciones
-
----
-
 
 ---
     </textarea>
