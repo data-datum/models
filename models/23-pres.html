@@ -124,7 +124,7 @@ class: center, middle
 
 
 ```r
-model1 &lt;- function(a, data) {
+model1 &lt;- function(a, data) {    #ecuación de una recta
   a[1] + data$x * a[2]
 }
 model1(c(7, 1.5), sim1)
@@ -177,16 +177,16 @@ modelos
 ## # A tibble: 250 x 3
 ##        a1     a2  dist
 ##     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-##  1  14.7  -1.76  15.3 
-##  2 -11.0   4.75   8.04
-##  3   1.54 -4.07  40.4 
-##  4  20.4  -0.127  7.81
-##  5 -15.3  -3.09  50.1 
-##  6  34.0   4.54  44.1 
-##  7  -1.25  2.87   3.32
-##  8  24.2  -2.45  14.0 
-##  9   6.00 -0.457 14.2 
-## 10  18.5   1.24  10.3 
+##  1  13.5  -1.23  13.0 
+##  2  26.2   0.662 15.0 
+##  3 -11.3  -0.118 28.3 
+##  4 -19.7  -4.64  63.7 
+##  5  21.4  -0.145  8.36
+##  6   9.88 -4.41  35.2 
+##  7  29.8   1.72  23.8 
+##  8  37.8   1.29  29.6 
+##  9   5.62 -4.08  36.8 
+## 10  36.7  -3.71  16.7 
 ## # … with 240 more rows
 ```
 
@@ -208,10 +208,11 @@ ggplot(sim1, aes(x, y)) +
 ![](23-pres_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
 
 
-
 ---
 
-## Usando una grilla (1)
+#### Usando una grilla (1)
+
+También podemos pensar estos modelos como observaciones y visualizar un diagrama de dispersión (o scatterplot, en inglés) de a1 versus a2, nuevamente coloreado usando -dist.
 
 
 ```r
@@ -223,7 +224,9 @@ ggplot(modelos, aes(a1, a2)) +
 ![](23-pres_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
 
 ---
-## Usando una grilla (2)
+#### Usando una grilla (2)
+
+En lugar de probar con múltples modelos aleatorios, se puede sistematizar y generar una cuadrícula de puntos igualmente espaciados (esto se llama búsqueda en cuadrícula).
 ![](23-pres_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
 
 ---
@@ -271,9 +274,11 @@ ggplot(sim1, aes(x, y)) +
 
 ---
 
-No te preocupes demasiado acerca de los detalles de cómo funciona optim(). La intuición es lo importante. Si tienes una función que define la mínima distancia entre un modelo y un conjunto de datos, un algoritmo que pueda minimizar la distancia modificando los parámetros del modelo te permitirá encontrar el mejor modelo. Lo interesante de este enfoque es que funciona con cualquier familia de modelos respecto de la cual se pueda escribir una ecuación que los describa.
+### No te preocupes demasiado acerca de los detalles de cómo funciona optim(). La intuición es lo importante. Lo interesante de este enfoque es que funciona con cualquier familia de modelos respecto de la cual se pueda escribir una ecuación que los describa.
 
-Existe otro enfoque que podemos usar para este modelo, debido a que es un caso especial de una familia más amplia: los modelos lineales. Un modelo lineal es de la forma y = a_1 + a_2 * x_1 + a_3 * x_2 + ... + a_n * x_(n+1). Este modelo simple es equivalente a un modelo lineal generalizado en el que n tiene valor 2 y x_1 es x. R cuenta con una herramienta diseñada especialmente para ajustar modelos lineales llamada lm(). lm() tiene un modo especial de especificar la familia del modelo: las fórmulas. Las fórmulas son similares a y ~ x, que lm() traducirá a una función de la forma y = a_1 + a_2 * x. Podemos ajustar el modelo y mirar la salida:
+Existe otro enfoque que podemos usar para este modelo, debido a que es un caso especial de una familia más amplia: los modelos lineales. Un modelo lineal es de la forma y = a_1 + a_2 * x_1 + a_3 * x_2 + ... + a_n * x_(n+1). Este modelo simple es equivalente a un modelo lineal generalizado en el que n tiene valor 2 y x_1 es x. 
+
+#### R cuenta con una herramienta diseñada especialmente para ajustar modelos lineales llamada lm(). lm() tiene un modo especial de especificar la familia del modelo: las fórmulas. Las fórmulas son similares a y ~ x, que lm() traducirá a una función de la forma y = a_1 + a_2 * x. Podemos ajustar el modelo y mirar la salida:
 
 ---
 # Usando la función `lm()` 
@@ -291,12 +296,32 @@ Existe otro enfoque que podemos usar para este modelo, debido a que es un caso e
 
 ---
 
-## Visualizando modelos `data_grid()` 
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
+# Visualizando modelos
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+### Para modelos simples, como el presentado anteriormente, puedes descubrir el patrón que captura el modelo si inspeccionas cuidadosamente la familia del modelo y los coeficientes ajustados. Si alguna vez tomaste un curso de modelado estadístico, te será habitual gastar mucho tiempo en esa tarea. Aquí, sin embargo, tomaremos otro camino. Vamos a enfocarnos en entender un modelo mirando las predicciones que genera. Esto tiene una gran ventaja: cada tipo de modelo predictivo realiza predicciones (¿qué otra podría realizar?) de modo que podemos usar el mismo conjunto de técnicas para entender cualquier tipo de modelo predictivo.
+
+#### Podemos visualizar los residuos
+
+
+---
+
+## `data_grid()` 
 
 
 ```r
 grid &lt;- sim1 %&gt;%
-  data_grid(x)
+* data_grid(x)
 grid
 ```
 
@@ -319,7 +344,7 @@ grid
 
 ---
 
-## `add_prediction()` 
+## `add_predictions()` 
 
 ```r
 grid &lt;- grid %&gt;%
@@ -377,7 +402,7 @@ Notar que usamos __el data frame original y no una grilla manufacturada.__´ Est
 
 ```r
 sim1 &lt;- sim1 %&gt;%
-  add_residuals(sim1_mod)
+* add_residuals(sim1_mod)
 sim1
 ```
 
@@ -406,7 +431,7 @@ Existen diferentes formas de entender qué nos dicen los residuos respecto del m
 
 ```r
 ggplot(sim1, aes(resid)) +
-  geom_freqpoly(binwidth = 0.5)
+* geom_freqpoly(binwidth = 0.5)
 ```
 
 ![](23-pres_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
@@ -443,66 +468,13 @@ class: center, middle
 
 ---
 
+### Fórmulas
 
-Ya habrás visto fórmulas anteriormente cuando usamos facet_wrap() y facet_grid(). En R, las fórmulas proveen un modo general de obtener “comportamientos especiales”. En lugar de evaluar los valores de las variables directamente, se capturan los valores para que sean interpretados por una función.
+En R, las fórmulas proveen un modo general de obtener “comportamientos especiales”. En lugar de evaluar los valores de las variables directamente, se capturan los valores para que sean interpretados por una función.
 
-La mayoría de los las funciones de modelado en R usan una conversión estándar para las fórmulas y las funciones. Ya habrás visto una conversión simple y ~ x que se convierte en y = a_1 + a_2 * x. Si quieres ver lo que hace R, puedes usar la función model_matrix(). Esta toma un data frame y una fórmula para entregar un tibble que define la ecuación del modelo: cada columna en la salida está asociada con un coeficiente del modelo, la función es siempre y = a_1 * salida_1 + a_2 * salida_2. Para el caso simple y ~ x1 esto nos muestra algo interesante:
+### Modelos
+La mayoría de los las funciones de modelado en R usan una conversión estándar para las fórmulas y las funciones. Ya habrás visto una conversión simple y ~ x que se convierte en y = a_1 + a_2 * x. Si quieres ver lo que hace R, puedes usar la función **model_matrix()**. Esta toma un data frame y una fórmula para entregar un tibble que define la ecuación del modelo: cada columna en la salida está asociada con un coeficiente del modelo, la función es siempre y = a_1 * salida_1 + a_2 * salida_2. Para el caso simple y ~ x1 esto nos muestra algo interesante:
 
----
-
-
-```r
-df &lt;- tribble(
-  ~y, ~x1, ~x2,
-  4, 2, 5,
-  5, 1, 6
-)
-model_matrix(df, y ~ x1)
-```
-
-```
-## # A tibble: 2 x 2
-##   `(Intercept)`    x1
-##           &lt;dbl&gt; &lt;dbl&gt;
-## 1             1     2
-## 2             1     1
-```
-
----
-
-La forma en que R agrega el intercepto (u ordenada al origen) al modelo es mediante una columna de unos. Por defecto, R siempre agregará esta columna. Si no quieres esto, necesitas excluirla explícitamente usando -1:
-
-
-```r
-model_matrix(df, y ~ x1 - 1)
-```
-
-```
-## # A tibble: 2 x 1
-##      x1
-##   &lt;dbl&gt;
-## 1     2
-## 2     1
-```
-
-La matriz del modelo crece de manera nada sorprendente si incluyes más variables al modelo:
-
-
-```r
-model_matrix(df, y ~ x1 + x2)
-```
-
-```
-## # A tibble: 2 x 3
-##   `(Intercept)`    x1    x2
-##           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1             1     2     5
-## 2             1     1     6
-```
-
-
-
----
 Las siguientes secciones detallan cómo esta notación de fórmulas funciona con variables categóricas, interacciones y transformaciones.
 
 
@@ -522,37 +494,8 @@ class: center, middle
 ## Variables categóricas 
 
 
-Generar una función a partir de una fórmula es directo cuando el predictor es una variable continua, pero las cosas son más complicadas cuando el predictor es una variable categórica. Imagina que tienes una fórmula como y ~ sexo, donde el sexo puede ser hombre o mujer. No tiene sentido convertir a una fórmula del tipo y = x_0 + x_1 * sexo debido a que sexo no es un número - ¡no se puede multiplicar! En su lugar, lo que R hace es convertir a y = x_0 + x_1 * sexo_hombre donde sexo_hombre tiene valor 1 si sexo corresponde a hombre y cero a mujer:
+Afortunadamente, si te enfocas en visualizar las predicciones no necesitas preocuparte de la parametrización exacta. Veamos algunos datos y modelos para hacer algo concreto. Aquí está el dataset sim2 de modelr:
 
----
-
-
-```r
-df &lt;- tribble(
-  ~genero, ~respuesta,
-  "masculino", 1,
-  "femenino", 2,
-  "masculino", 1
-)
-model_matrix(df, respuesta ~ genero)
-```
-
-```
-## # A tibble: 3 x 2
-##   `(Intercept)` generomasculino
-##           &lt;dbl&gt;           &lt;dbl&gt;
-## 1             1               1
-## 2             1               0
-## 3             1               1
-```
-
----
-
-Quizá te preguntes por qué R no crea la columna generofemenino. El problema es que eso crearía una columna perfectamente predecible a partir de las otras columnas (es decir, generofemenino = 1 - generomasculino). Desafortunadamete los detalles exactos de por qué esto es un problema van más allá del alcance del libro, pero básicamente crea una familia de modelos que es muy flexible y genera infinitos modelos igualmente cercanos a los datos.
-
-Afortunadamente, sin embargo, si te enfocas en visualizar las predicciones no necesitas preocuparte de la parametrización exacta. Veamos algunos datos y modelos para hacer algo concreto. Aquí está el dataset sim2 de modelr:
-
----
 
 
 ```r
@@ -560,7 +503,7 @@ ggplot(sim2) +
   geom_point(aes(x, y))
 ```
 
-![](23-pres_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+![](23-pres_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -597,7 +540,7 @@ ggplot(sim2, aes(x)) +
   geom_point(data = grid, aes(y = pred), colour = "red", size = 4)
 ```
 
-![](23-pres_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+![](23-pres_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -607,6 +550,11 @@ No es posible hacer predicciones sobre niveles no observados. A veces harás est
 ```r
 tibble(x = "e") %&gt;%
   add_predictions(mod2)
+```
+
+
+```r
+#&gt; Error in model.frame.default(Terms, newdata, na.action = na.action, xlev = object$xlevels): factor x has new level e
 ```
 
 ---
@@ -630,7 +578,7 @@ ggplot(sim3, aes(x1, y)) +
   geom_point(aes(colour = x2))
 ```
 
-![](23-pres_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
+![](23-pres_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -693,7 +641,7 @@ ggplot(sim3, aes(x1, y, colour = x2)) +
   facet_wrap(~model)
 ```
 
-![](23-pres_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
+![](23-pres_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
 
 ---
 background-image: url(img/fondo-madera.png)
@@ -717,7 +665,7 @@ ggplot(sim3, aes(x1, resid, colour = x2)) +
   facet_grid(model ~ x2)
 ```
 
-![](23-pres_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+![](23-pres_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
   
 ---
 
@@ -773,14 +721,14 @@ Para suprimir los mensajes de advertencia, incluye na.action = na.exclude:
 
 
 ```r
-mod &lt;- lm(y ~ x, data = df, na.action = na.exclude)
+*mod &lt;- lm(y ~ x, data = df, na.action = na.exclude)
 ```
 
 Siempre puedes consultar cuántas observaciones se usaron con nobs():
 
 
 ```r
-nobs(mod)
+*nobs(mod)
 ```
 
 ```
@@ -813,6 +761,48 @@ Este capítulo se centró de forma exclusiva en la familia de modelos lineales, 
 
 * Modelos lineales robustos, es decir, MASS:rlm(), modifican la distancia para restar importancia a los puntos que quedan muy alejados. Esto resulta en modelos menos sensibles a valores extremos, con el inconveniente de que no son muy buenos cuando no hay valores extremos.
 * Árboles, es decir, rpart::rpart(), atacan un problema de un modo totalmente distinto a los modelos lineales. Ajustan un modelo constante por partes, dividiendo los datos en partes progresivamente más y más pequeñas. Los árboles no son tremendamente efectivos por sí solos, pero son muy poderosos cuando se usan en modelos agregados como bosques aleatorios, del inglés random forests), (es decir, randomForest::randomForest()) o máquinas aceleradoras de gradiente, del inglés gradient boosting machines (es decir, xgboost::xgboost.).
+
+---
+
+background-image: url(img/text-msg.png)
+background-size: cover
+class: center, middle
+
+# Conclusión
+
+
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+## 1. Definición de modelo. 
+
+## 2. Importancia de residuos.
+
+## 3. Interacciones 
+
+### 4. Valores faltantes
+
+---
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
+
+
+# Set de datos
+
+### sim1: modelización lineal
+
+### sim2: modelización de variables categóricas
+
+### sim3: modelización de interacciones
+
+---
+
+
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
