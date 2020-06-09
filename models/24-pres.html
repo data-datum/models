@@ -101,6 +101,7 @@ ggplot(diamantes, aes(corte, precio)) + geom_boxplot()
 
 
 ```r
+# D(best) a J(worst)
 ggplot(diamantes, aes(color, precio)) + geom_boxplot()
 ```
 
@@ -112,6 +113,7 @@ ggplot(diamantes, aes(color, precio)) + geom_boxplot()
 
 
 ```r
+# I1 (worst), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (best)
 ggplot(diamantes, aes(claridad, precio)) + geom_boxplot()
 ```
 
@@ -182,9 +184,9 @@ Luego observamos lo que el modelo nos dice. Ten en cuenta que vuelvo atrás la t
 
 ```r
 cuadricula &lt;- diamantes2 %&gt;% 
-  data_grid(quilate = seq_range(quilate, 20)) %&gt;% 
+* data_grid(quilate = seq_range(quilate, 20)) %&gt;%
   mutate(log_quilates = log2(quilate)) %&gt;% 
-  add_predictions(mod_diamantes, "log_precio") %&gt;% 
+* add_predictions(mod_diamantes, "log_precio") %&gt;%
   mutate(precio = 2 ^ log_precio)
 
 ggplot(diamantes2, aes(quilate, precio)) + 
@@ -256,7 +258,7 @@ background-size: cover
 class: center, middle
 
 
-## Ahora vemos la relación que esperábamos: a medida que aumenta la calidad del diamante, también lo hace su precio relativo. Para interpretar el eje y, necesitamos pensar que nos dicen los residuos, y en que escala están. Un residuo de -1 indica que log_precio era 1 unidad más baja que la predicción basada únicamente en su peso. 2−1 es 1/2, los puntos con un valor de -1 son la mitad del precio esperado, y los residuos con el valor 1 son el doble del precio predicho.
+## Ahora vemos la relación que esperábamos: a medida que aumenta la calidad del diamante, también lo hace su precio relativo. Para interpretar el eje y, necesitamos pensar que nos dicen los residuos, y en que escala están. Un residuo de -1 indica que log_precio era 1 unidad más baja que la predicción basada únicamente en su peso. 2^(−1) es 1/2, los puntos con un valor de -1 son la mitad del precio esperado, y los residuos con el valor 1 son el doble del precio predicho.
 
 ---
 background-image: url(img/text-msg.png)
@@ -281,7 +283,8 @@ class: center, middle
 
 ```r
 mod_diamantes2 &lt;- lm(log_precio ~ log_quilates 
-                    + color + corte + claridad, data = diamantes2)
+*                   + color + corte + claridad,
+                    data = diamantes2)
 ```
 
 Este modelo ahora incluye **cuatro predictores**, por lo que es más difícil de visualizar. Afortunadamente, todos ellos son actualmente independientes lo que significa que podemos graficarlos individualmente en cuatro gráficos.
@@ -307,6 +310,7 @@ cuadricula
 ## 4 Premium         -0.515 G     VS2       11.4
 ## 5 Ideal           -0.515 G     VS2       11.4
 ```
+
 
 ---
 
@@ -347,7 +351,7 @@ Este gráfico indica que hay algunos diamantes con residuos bastante grandes - r
 ```r
 diamantes2 %&gt;% 
   filter(abs(lresid2) &gt; 1) %&gt;% 
-  add_predictions(mod_diamantes2) %&gt;% 
+  add_predictions(mod_diamantes2) %&gt;%  
   mutate(pred = round(2 ^ pred)) %&gt;% 
   select(precio, pred, quilate:tabla, x:z) %&gt;% 
   arrange(precio)

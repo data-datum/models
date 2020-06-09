@@ -38,6 +38,17 @@ class: center, middle
 
 ---
 
+# Donde estamos
+
+```{r echo = FALSE, out.width = "100%"}
+knitr::include_graphics("img/data-science-model.svg")
+```
+
+
+
+
+---
+
 background-image: url(img/fondo-madera.png)
 background-size: cover
 class: center, middle
@@ -48,8 +59,18 @@ class: center, middle
 ## de un conjunto de datos
 
     
+---
+
+background-image: url(img/fondo-madera.png)
+background-size: cover
+class: center, middle
 
 
+# Es el proceso de desarrollo de una herramienta matemática o modelo que genera una predicción precisa. 
+# Entrenamos un modelo para encontrar esa predicción precisa. 
+
+.footnote[http://appliedpredictivemodeling.com/]
+  
 
 ---
 
@@ -60,7 +81,7 @@ En este capítulo usaremos el paquete modelr que tiene las funciones de modelado
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)  #<<
 library(modelr)  #<<
-options(na.action = na.warn)
+options(na.action = na.warn) #eliminar valores perdidos
 ```
 
 ---
@@ -177,7 +198,7 @@ ggplot(sim1, aes(x, y)) +
   geom_point(size = 2, colour = "grey30") +
   geom_abline(
     aes(intercept = a1, slope = a2, colour = -dist),
-    data = filter(modelos, rank(dist) <= 10)
+    data = filter(modelos, rank(dist) <= 10) #<<
   )
 ```
 
@@ -197,7 +218,7 @@ ggplot(modelos, aes(a1, a2)) +
 ---
 #### Usando una grilla (2)
 
-En lugar de probar con múltples modelos aleatorios, se puede sistematizar y generar una cuadrícula de puntos igualmente espaciados (esto se llama búsqueda en cuadrícula).
+En lugar de probar con múltiples modelos aleatorios, se puede sistematizar y generar una cuadrícula de puntos igualmente espaciados (esto se llama búsqueda en cuadrícula).
 ```{r echo=FALSE}
 grid <- expand.grid(
   a1 = seq(-5, 20, length = 25),
@@ -219,7 +240,7 @@ ggplot(sim1, aes(x, y)) +
   geom_point(size = 2, colour = "grey30") +
   geom_abline(
     aes(intercept = a1, slope = a2, colour = -dist),
-    data = filter(grid, rank(dist) <= 10))
+    data = filter(grid, rank(dist) <= 10)) #<<
 ```
 
 ---
@@ -231,6 +252,7 @@ De forma iterativa se puede hacer la cuadrícula más y más fina hasta reducir 
 _Existe una forma mejor de resolver el problema:_ una herramienta de minimización llamada __búsqueda de Newton-Raphson__. La intuición detrás de Newton-Raphson es bastante simple: tomas un punto de partida y buscas la pendiente más fuerte en torno a ese punto. Puedes bajar por esa pendiente un poco, para luego repetir el proceso varias veces, hasta que no se puede descender más. __En R, esto se puede hacer con la función optim():__
 
 ```{r}
+#c(0, 0) valores iniciales
 best <- optim(c(0, 0), measure_distance, data = sim1)
 best$par
 ```
@@ -334,9 +356,9 @@ sim1
 ```
 
 ---
-## Polígono de frecuencias `geom_freqpoly()` 
+## `geom_freqpoly()` 
 
-Existen diferentes formas de entender qué nos dicen los residuos respecto del modelo. Una forma es dibujar un polígono de frecuencia que nos ayude a entender cómo se propagan los residuos:
+Existen diferentes formas de entender qué nos dicen los residuos respecto del modelo. Una forma es dibujar un **polígono de frecuencias** que nos ayude a entender cómo se propagan los residuos:
 
 ```{r fig.height=4}
 ggplot(sim1, aes(resid)) +
@@ -487,8 +509,8 @@ Esto combinado nos da:
 
 ```{r}
 grid <- sim3 %>%
-  data_grid(x1, x2) %>%
-  gather_predictions(mod1, mod2)
+  data_grid(x1, x2) %>% #<<
+  gather_predictions(mod1, mod2) #<<
 grid
 ```
 
@@ -552,7 +574,7 @@ class: center, middle
 ## Valores faltantes
 
 
-Los valores faltantes obviamente no proporcionan información respecto de la relación entre las variables, por lo que modelar funciones va a eliminar todas las filas con valores faltantes. R por defecto lo hace de forma silenciosa, pero options(na.action = na.warn) (ejecutado en los prerrequisitos) asegura que la salida incluya una advertencia.
+Los valores faltantes obviamente no proporcionan información respecto de la relación entre las variables, por lo que modelar funciones va a eliminar todas las filas con valores faltantes. R por defecto lo hace de forma silenciosa, pero options(na.action = na.warn) asegura que la salida incluya una advertencia.
 
 ```{r}
 df <- tribble(
